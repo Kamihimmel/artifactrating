@@ -122,7 +122,18 @@ async function handleRequest(request) {
       'atk': 5,
       'hp': 0,
       'def': 0,
-
+    },
+    'xiao': {
+      'atk%': 15,
+      'hp%': 0,
+      'def%': 0,
+      'em': 0,
+      'cr': 30,
+      'cd': 30,
+      'er': 0,
+      'atk': 7.5,
+      'hp': 0,
+      'def': 0,
     }
   }
 
