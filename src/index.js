@@ -470,6 +470,53 @@ async function handleRequest(request) {
       'def%': artifactSubstatScore.NONE,
       'def':  artifactSubstatScore.NONE,
     },  
+    'xiangling': {
+      'cr':   artifactSubstatScore.HIGHEST,
+      'cd':   artifactSubstatScore.HIGHEST,
+      'er':   artifactSubstatScore.HIGHER,
+      'em':   artifactSubstatScore.HIGHER,
+      'atk%': artifactSubstatScore.HIGH,
+      'atk':  artifactSubstatScore.LOW,
+      'hp%':  artifactSubstatScore.NONE,
+      'hp':   artifactSubstatScore.NONE,
+      'def%': artifactSubstatScore.NONE,
+      'def':  artifactSubstatScore.NONE,
+    },  
+  }
+
+  const artifactdefaultroll = {
+    5: {
+      'cr': 3.3,
+      'cd': 6.6,
+      'er': 5.5,
+      'em': 20,
+      'atk%': 5,
+      'atk': 17,
+      'hp%': 5,
+      'hp': 254,
+      'def%': 6.2,
+      'def': 20,
+    },
+    4: {
+      'cr': 2.65,
+      'cd': 5.3,
+      'er': 4.4,
+      'em': 16,
+      'atk%': 3.95,
+      'atk': 13,
+      'hp%': 3.95,
+      'hp': 203,
+      'def%': 5,
+      'def': 16,
+    },
+  }
+
+  const artifactScoreTier = {
+    'SSS': 1000,
+    'S': 900,
+    'A': 700,
+    'B': 400,
+    'C': 0,
   }
 
   const charactername = idtocharacter[cid]
