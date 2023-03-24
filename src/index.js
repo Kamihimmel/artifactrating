@@ -638,6 +638,7 @@ async function handleRequest(request) {
       'def%': artifactSubstatScore.NONE,
       'def': artifactSubstatScore.NONE,
     },
+    'amber': {},
   }
 
   const artifactdefaultroll = {
@@ -773,7 +774,6 @@ async function handleRequest(request) {
     allpt: allpt,
     result: result,
   }
-
 
 
 
