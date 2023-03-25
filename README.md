@@ -18,39 +18,76 @@ https://[your workers ip]/?cid=10000058&fstar=5&flv=20&stat1atkpercent=9.9&stat1
 
 ## parameter details
 cid (characterid the same in game or provided by enka network)
+
 fstar( the star rank of flower)
+
 flv(the level of flower)
+
 pstar( the star rank of plume)
+
 plv(the level of plume)
+
 sstar(the star rank of sand)
+
 slv(the level of sand)
+
 gstar(the star rank of goblet)
+
 glv(the level of goblet)
+
 cstar(the star rank of circlet)
+
 clv(the level of circlet)
+
 artifact3mainstatcat(main category of sand)
+
 1:HP% 2:ATK% 3:DEF% 4:EM 5:ER
+
 artifact4mainstatcat(main category of goblet)
+
 1:HP% 2:ATK% 3:DEF% 4:EM 5:Physical Damage 6:Pyro Damage 7:Hydro Damage 8:Cryo Damage 9:Electro Damage 10:Anemo Damage 11:Geo Damage 12:Dendro Damage
+
 artifact5mainstatcat(main category of circlet)
+
 1:HP% 2:ATK% 3:DEF% 4:EM 5:Critical Rate 6:Critical Damage 7:Healing Bonus
+
 stat[x]atkpercent (atk with percentage substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]hppercent (hp with percentage substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]defpercent (def with percentage substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]EM (EM substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]ERpercent (Energy Recharge with percentage substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]CRpercent (Crit Rate with percentage substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]CDpercent (Crit Dmg with percentage substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]atk (flat atk substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]hp (flat atk substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
 stat[x]def (flat def substat of artifact)
+
 1:flower 2:plume 3:sand 4:goblet 5:circlet
+
