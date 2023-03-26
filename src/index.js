@@ -108,6 +108,27 @@ async function handleRequest(request) {
     10000075: 'wanderer',
     10000078: 'alhaitham',
     10000079: 'dehya',
+    10000047: 'kazuha',
+    10000022: 'venti',
+    10000063: 'shenhe',
+    10000016: 'diluc',
+    10000029: 'klee',
+    10000003: 'jean',
+    10000032: 'bennett',
+    10000065: 'shinobu',
+    10000076: 'faruzan',
+    10000038: 'albedo',
+    10000041: 'mona',
+    10000056: 'sara',
+    10000055: 'gorou',
+    10000064: 'yunjin',
+    10000045: 'rosaria',
+    10000050: 'thoma',
+    10000074: 'thoma',
+    10000039: 'diona',
+    10000072: 'candace',
+    10000024: 'beidou',
+    10000080: 'mika',
   };
 
   const artifactSubstatScore = {
@@ -809,7 +830,6 @@ async function handleRequest(request) {
     allpt: allpt,
     result: result,
   }
-
 
 
 
