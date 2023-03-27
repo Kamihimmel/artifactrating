@@ -740,6 +740,12 @@ async function handleRequest(request) {
 
   const charactername = idtocharacter[cid]
 
+  if (charactername == null) {
+    return new Response('Not found', {
+      status: 404
+    })
+  }
+
   var stat1atkpercentpt = stat1atkpercent / artifactdefaultroll[fstar]['atk%'] * charactersubstatvalue[charactername]['atk%']
   var stat1hppercentpt = stat1hppercent / artifactdefaultroll[fstar]['hp%'] * charactersubstatvalue[charactername]['hp%']
   var stat1defpercentpt = stat1defpercent / artifactdefaultroll[fstar]['def%'] * charactersubstatvalue[charactername]['def%']
