@@ -9,13 +9,15 @@ A artifact rating api works on cloudflare workers
 2. Rotation: The rating system does not account for the order and timing of skill casting by different characters, which can have a significant impact on their damage output, survivability, and utility. Some characters may have synergies or conflicts with each other depending on their skill rotations.
 3. Buffs: The rating system does not account for any additional buffs that can be applied by teammates or other external sources, such as food items, environmental effects, etc, with the exception of elemental resonance. These buffs can enhance or diminish the effectiveness of certain artifacts or characters.
 
+*Moreover, some characters have more effective stats (i.e. benefit from wider range of stats). Therefore, characters with less effective stats will naturally find it harder to attain higher scores (e.g. Xiao vs Yelan).*
+
 Therefore, this rating system should not be used as a definitive guide for choosing artifacts or building teams. It is merely a fun way to compare different artifact combinations and see how they affect a single character's combat potential. Please use your own judgment and experience when playing the game and enjoy it to the fullest!
 
 ## Artifact API Usage Guide
 This guide provides information on how to use the Artifact API. Below, you will find details on the parameters required for making API calls. It also provides instructions on how to use the Artifact API, which helps you analyze and compare the stats of artifacts in the game.
 
 ### parameter details
-cid: Character ID (the same in-game or provided by the Enka Network).
+`cid`: Character ID (the same in-game or provided by the Enka Network).
 
 `fstar, pstar, sstar, gstar, cstar`: Star rank of the artifact (Flower, Plume, Sands, Goblet, and Circlet).
 
