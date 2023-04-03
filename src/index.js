@@ -79,6 +79,8 @@ async function handleRequest(request) {
   const stat5hp = url.searchParams.get("stat5hp") ?? 0;
   const stat5def = url.searchParams.get("stat5def") ?? 0;
 
+  // Return a 404 if the character ID is not found
+  // add a message: character does not exist or character is not supported
   if (!cid) {
     return new Response("Not found", {
       status: 404,
@@ -605,7 +607,7 @@ async function handleRequest(request) {
       "def%": artifactSubstatScore.HIGH,
       def: artifactSubstatScore.MEDIUM,
     },
-    yunjun: {
+    yunjin: {
       cr: artifactSubstatScore.HIGHEST,
       cd: artifactSubstatScore.HIGHEST,
       er: artifactSubstatScore.HIGHEST,
