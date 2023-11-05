@@ -1002,7 +1002,7 @@ async function handleRequest(request) {
     furina: {
       cr: artifactSubstatScore.HIGHEST,
       cd: artifactSubstatScore.HIGHEST,
-      er: artifactSubstatScore.LOW,
+      er: artifactSubstatScore.HIGH,
       em: artifactSubstatScore.NONE,
       "atk%": artifactSubstatScore.NONE,
       atk: artifactSubstatScore.NONE,
