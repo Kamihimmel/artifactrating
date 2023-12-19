@@ -1016,7 +1016,7 @@ async function handleRequest(request) {
       cr: artifactSubstatScore.HIGHEST,
       cd: artifactSubstatScore.HIGHEST,
       er: artifactSubstatScore.LOW,
-      em: artifactSubstatScore.LOW,
+      em: artifactSubstatScore.NONE,
       "atk%": artifactSubstatScore.HIGH,
       atk: artifactSubstatScore.LOW,
       "hp%": artifactSubstatScore.NONE,
