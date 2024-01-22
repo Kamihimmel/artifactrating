@@ -5,6 +5,9 @@ addEventListener("fetch", (event) => {
 async function handleRequest(request) {
   const url = new URL(request.url);
   const cid = url.searchParams.get("cid");
+  // 0: Physico, 1: Anemo, 2: Geo, 3: Electro, 4: Dendro, 5: Hydro, 6: Pyro, 7: Cryo.
+  // This allows distinguishing which element the protagonist (Hotaru / Sora) is mastering.
+  const elementId = url.searchParams.get("elementId") ?? 0;
   const fstar = url.searchParams.get("fstar") ?? 5;
   const flv = url.searchParams.get("flv") ?? 20;
   const stat1atkpercent = url.searchParams.get("stat1atkpercent") ?? 0;
@@ -79,6 +82,14 @@ async function handleRequest(request) {
   const stat5hp = url.searchParams.get("stat5hp") ?? 0;
   const stat5def = url.searchParams.get("stat5def") ?? 0;
 
+  // Artifact Set ID.
+
+  const stat1setId = url.searchParams.get("stat1setId") ?? 0;
+  const stat2setId = url.searchParams.get("stat2setId") ?? 0;
+  const stat3setId = url.searchParams.get("stat3setId") ?? 0;
+  const stat4setId = url.searchParams.get("stat4setId") ?? 0;
+  const stat5setId = url.searchParams.get("stat5setId") ?? 0;
+
   // Return a 404 if the character ID is not found
   if (!cid) {
     return new Response("Not found", {
@@ -152,7 +163,8 @@ async function handleRequest(request) {
     10000044: "xinyan",
     10000006: "lisa",
     10000062: "alloy",
-    10000007: "maincharacter",
+    10000005: "sora",
+    10000007: "hotaru",
     10000084: "lyney",
     10000086: "wriothesley",
     10000087: "neuvillette",
@@ -952,7 +964,19 @@ async function handleRequest(request) {
       "def%": artifactSubstatScore.NONE,
       def: artifactSubstatScore.NONE,
     },
-    maincharacter: {
+    sora: {
+      cr: artifactSubstatScore.HIGHEST,
+      cd: artifactSubstatScore.HIGHEST,
+      er: artifactSubstatScore.HIGH,
+      em: artifactSubstatScore.MEDIUM,
+      "atk%": artifactSubstatScore.HIGH,
+      atk: artifactSubstatScore.LOW,
+      "hp%": artifactSubstatScore.NONE,
+      hp: artifactSubstatScore.NONE,
+      "def%": artifactSubstatScore.NONE,
+      def: artifactSubstatScore.NONE,
+    },
+    hotaru: {
       cr: artifactSubstatScore.HIGHEST,
       cd: artifactSubstatScore.HIGHEST,
       er: artifactSubstatScore.HIGH,
@@ -1075,36 +1099,41 @@ async function handleRequest(request) {
     });
   }
 
-  var stat1atkpercentpt =
-    (stat1atkpercent / artifactdefaultroll[fstar]["atk%"]) *
-    charactersubstatvalue[charactername]["atk%"];
-  var stat1hppercentpt =
-    (stat1hppercent / artifactdefaultroll[fstar]["hp%"]) *
-    charactersubstatvalue[charactername]["hp%"];
-  var stat1defpercentpt =
-    (stat1defpercent / artifactdefaultroll[fstar]["def%"]) *
-    charactersubstatvalue[charactername]["def%"];
-  var stat1CRpt =
-    (stat1CRpercent / artifactdefaultroll[fstar]["cr"]) *
-    charactersubstatvalue[charactername]["cr"];
-  var stat1CDpt =
-    (stat1CDpercent / artifactdefaultroll[fstar]["cd"]) *
-    charactersubstatvalue[charactername]["cd"];
-  var stat1EMpt =
-    (stat1EM / artifactdefaultroll[fstar]["em"]) *
-    charactersubstatvalue[charactername]["em"];
-  var stat1ERpt =
-    (stat1ERpercent / artifactdefaultroll[fstar]["er"]) *
-    charactersubstatvalue[charactername]["er"];
-  var stat1atkpt =
-    (stat1atk / artifactdefaultroll[fstar]["atk"]) *
-    charactersubstatvalue[charactername]["atk"];
-  var stat1hppt =
-    (stat1hp / artifactdefaultroll[fstar]["hp"]) *
-    charactersubstatvalue[charactername]["hp"];
-  var stat1defpt =
-    (stat1def / artifactdefaultroll[fstar]["def"]) *
-    charactersubstatvalue[charactername]["def"];
+  var mapCharacterSubStat = charactersubstatvalue[charactername];
+
+  // MARK: - Adjust dictionary contents for potential Hyperbloom Electro Roles.
+
+  /// Theoreotically, any electro character can be turned into a Hyperbloom trigger if any of the following 4-set is equipped.
+  /// This affects the standards for benchmarking the artifacts.
+  /// For example, if Raiden Shogun has a 4-set Paradise Lost equipped, then her Element Master should be considered the most useful.
+
+  const hyperbloomSets4 = [15028, 15026, 15025, 10007];
+  const setIdValuesDetected = new Set();
+
+  if (elementId == 3) {
+    var accumulation = 0;
+    if (hyperbloomSets4.includes(stat1setId)) { setIdValuesDetected.add(stat1setId); accumulation += 1; }
+    if (hyperbloomSets4.includes(stat2setId)) { setIdValuesDetected.add(stat2setId); accumulation += 1; }
+    if (hyperbloomSets4.includes(stat3setId)) { setIdValuesDetected.add(stat3setId); accumulation += 1; }
+    if (hyperbloomSets4.includes(stat4setId)) { setIdValuesDetected.add(stat4setId); accumulation += 1; }
+    if (hyperbloomSets4.includes(stat5setId)) { setIdValuesDetected.add(stat5setId); accumulation += 1; }
+    if (accumulation >= 4 && setIdValuesDetected.size <= 2) {
+      mapCharacterSubStat[em] = artifactSubstatScore.HIGHEST;
+    }
+  }
+
+  // MARK: - Continue processing.
+
+  var stat1atkpercentpt = (stat1atkpercent / artifactdefaultroll[fstar]["atk%"]) * mapCharacterSubStat["atk%"];
+  var stat1hppercentpt = (stat1hppercent / artifactdefaultroll[fstar]["hp%"]) * mapCharacterSubStat["hp%"];
+  var stat1defpercentpt = (stat1defpercent / artifactdefaultroll[fstar]["def%"]) * mapCharacterSubStat["def%"];
+  var stat1CRpt = (stat1CRpercent / artifactdefaultroll[fstar]["cr"]) * mapCharacterSubStat["cr"];
+  var stat1CDpt = (stat1CDpercent / artifactdefaultroll[fstar]["cd"]) * mapCharacterSubStat["cd"];
+  var stat1EMpt = (stat1EM / artifactdefaultroll[fstar]["em"]) * mapCharacterSubStat["em"];
+  var stat1ERpt = (stat1ERpercent / artifactdefaultroll[fstar]["er"]) * mapCharacterSubStat["er"];
+  var stat1atkpt = (stat1atk / artifactdefaultroll[fstar]["atk"]) * mapCharacterSubStat["atk"];
+  var stat1hppt = (stat1hp / artifactdefaultroll[fstar]["hp"]) * mapCharacterSubStat["hp"];
+  var stat1defpt = (stat1def / artifactdefaultroll[fstar]["def"]) * mapCharacterSubStat["def"];
 
   var stat1pt =
     stat1atkpercentpt +
@@ -1118,36 +1147,16 @@ async function handleRequest(request) {
     stat1hppt +
     stat1defpt;
 
-  var stat2atkpercentpt =
-    (stat2atkpercent / artifactdefaultroll[pstar]["atk%"]) *
-    charactersubstatvalue[charactername]["atk%"];
-  var stat2hppercentpt =
-    (stat2hppercent / artifactdefaultroll[pstar]["hp%"]) *
-    charactersubstatvalue[charactername]["hp%"];
-  var stat2defpercentpt =
-    (stat2defpercent / artifactdefaultroll[pstar]["def%"]) *
-    charactersubstatvalue[charactername]["def%"];
-  var stat2CRpt =
-    (stat2CRpercent / artifactdefaultroll[pstar]["cr"]) *
-    charactersubstatvalue[charactername]["cr"];
-  var stat2CDpt =
-    (stat2CDpercent / artifactdefaultroll[pstar]["cd"]) *
-    charactersubstatvalue[charactername]["cd"];
-  var stat2EMpt =
-    (stat2EM / artifactdefaultroll[pstar]["em"]) *
-    charactersubstatvalue[charactername]["em"];
-  var stat2ERpt =
-    (stat2ERpercent / artifactdefaultroll[pstar]["er"]) *
-    charactersubstatvalue[charactername]["er"];
-  var stat2atkpt =
-    (stat2atk / artifactdefaultroll[pstar]["atk"]) *
-    charactersubstatvalue[charactername]["atk"];
-  var stat2hppt =
-    (stat2hp / artifactdefaultroll[pstar]["hp"]) *
-    charactersubstatvalue[charactername]["hp"];
-  var stat2defpt =
-    (stat2def / artifactdefaultroll[pstar]["def"]) *
-    charactersubstatvalue[charactername]["def"];
+  var stat2atkpercentpt = (stat2atkpercent / artifactdefaultroll[pstar]["atk%"]) * mapCharacterSubStat["atk%"];
+  var stat2hppercentpt = (stat2hppercent / artifactdefaultroll[pstar]["hp%"]) * mapCharacterSubStat["hp%"];
+  var stat2defpercentpt = (stat2defpercent / artifactdefaultroll[pstar]["def%"]) * mapCharacterSubStat["def%"];
+  var stat2CRpt = (stat2CRpercent / artifactdefaultroll[pstar]["cr"]) * mapCharacterSubStat["cr"];
+  var stat2CDpt = (stat2CDpercent / artifactdefaultroll[pstar]["cd"]) * mapCharacterSubStat["cd"];
+  var stat2EMpt = (stat2EM / artifactdefaultroll[pstar]["em"]) * mapCharacterSubStat["em"];
+  var stat2ERpt = (stat2ERpercent / artifactdefaultroll[pstar]["er"]) * mapCharacterSubStat["er"];
+  var stat2atkpt = (stat2atk / artifactdefaultroll[pstar]["atk"]) * mapCharacterSubStat["atk"];
+  var stat2hppt = (stat2hp / artifactdefaultroll[pstar]["hp"]) * mapCharacterSubStat["hp"];
+  var stat2defpt = (stat2def / artifactdefaultroll[pstar]["def"]) * mapCharacterSubStat["def"];
 
   var stat2pt =
     stat2atkpercentpt +
@@ -1161,36 +1170,16 @@ async function handleRequest(request) {
     stat2hppt +
     stat2defpt;
 
-  var stat3atkpercentpt =
-    (stat3atkpercent / artifactdefaultroll[sstar]["atk%"]) *
-    charactersubstatvalue[charactername]["atk%"];
-  var stat3hppercentpt =
-    (stat3hppercent / artifactdefaultroll[sstar]["hp%"]) *
-    charactersubstatvalue[charactername]["hp%"];
-  var stat3defpercentpt =
-    (stat3defpercent / artifactdefaultroll[sstar]["def%"]) *
-    charactersubstatvalue[charactername]["def%"];
-  var stat3CRpt =
-    (stat3CRpercent / artifactdefaultroll[sstar]["cr"]) *
-    charactersubstatvalue[charactername]["cr"];
-  var stat3CDpt =
-    (stat3CDpercent / artifactdefaultroll[sstar]["cd"]) *
-    charactersubstatvalue[charactername]["cd"];
-  var stat3EMpt =
-    (stat3EM / artifactdefaultroll[sstar]["em"]) *
-    charactersubstatvalue[charactername]["em"];
-  var stat3ERpt =
-    (stat3ERpercent / artifactdefaultroll[sstar]["er"]) *
-    charactersubstatvalue[charactername]["er"];
-  var stat3atkpt =
-    (stat3atk / artifactdefaultroll[sstar]["atk"]) *
-    charactersubstatvalue[charactername]["atk"];
-  var stat3hppt =
-    (stat3hp / artifactdefaultroll[sstar]["hp"]) *
-    charactersubstatvalue[charactername]["hp"];
-  var stat3defpt =
-    (stat3def / artifactdefaultroll[sstar]["def"]) *
-    charactersubstatvalue[charactername]["def"];
+  var stat3atkpercentpt = (stat3atkpercent / artifactdefaultroll[sstar]["atk%"]) * mapCharacterSubStat["atk%"];
+  var stat3hppercentpt = (stat3hppercent / artifactdefaultroll[sstar]["hp%"]) * mapCharacterSubStat["hp%"];
+  var stat3defpercentpt = (stat3defpercent / artifactdefaultroll[sstar]["def%"]) * mapCharacterSubStat["def%"];
+  var stat3CRpt = (stat3CRpercent / artifactdefaultroll[sstar]["cr"]) * mapCharacterSubStat["cr"];
+  var stat3CDpt = (stat3CDpercent / artifactdefaultroll[sstar]["cd"]) * mapCharacterSubStat["cd"];
+  var stat3EMpt = (stat3EM / artifactdefaultroll[sstar]["em"]) * mapCharacterSubStat["em"];
+  var stat3ERpt = (stat3ERpercent / artifactdefaultroll[sstar]["er"]) * mapCharacterSubStat["er"];
+  var stat3atkpt = (stat3atk / artifactdefaultroll[sstar]["atk"]) * mapCharacterSubStat["atk"];
+  var stat3hppt = (stat3hp / artifactdefaultroll[sstar]["hp"]) * mapCharacterSubStat["hp"];
+  var stat3defpt = (stat3def / artifactdefaultroll[sstar]["def"]) * mapCharacterSubStat["def"];
 
   var stat3pt =
     stat3atkpercentpt +
@@ -1204,36 +1193,16 @@ async function handleRequest(request) {
     stat3hppt +
     stat3defpt;
 
-  var stat4atkpercentpt =
-    (stat4atkpercent / artifactdefaultroll[gstar]["atk%"]) *
-    charactersubstatvalue[charactername]["atk%"];
-  var stat4hppercentpt =
-    (stat4hppercent / artifactdefaultroll[gstar]["hp%"]) *
-    charactersubstatvalue[charactername]["hp%"];
-  var stat4defpercentpt =
-    (stat4defpercent / artifactdefaultroll[gstar]["def%"]) *
-    charactersubstatvalue[charactername]["def%"];
-  var stat4CRpt =
-    (stat4CRpercent / artifactdefaultroll[gstar]["cr"]) *
-    charactersubstatvalue[charactername]["cr"];
-  var stat4CDpt =
-    (stat4CDpercent / artifactdefaultroll[gstar]["cd"]) *
-    charactersubstatvalue[charactername]["cd"];
-  var stat4EMpt =
-    (stat4EM / artifactdefaultroll[gstar]["em"]) *
-    charactersubstatvalue[charactername]["em"];
-  var stat4ERpt =
-    (stat4ERpercent / artifactdefaultroll[gstar]["er"]) *
-    charactersubstatvalue[charactername]["er"];
-  var stat4atkpt =
-    (stat4atk / artifactdefaultroll[gstar]["atk"]) *
-    charactersubstatvalue[charactername]["atk"];
-  var stat4hppt =
-    (stat4hp / artifactdefaultroll[gstar]["hp"]) *
-    charactersubstatvalue[charactername]["hp"];
-  var stat4defpt =
-    (stat4def / artifactdefaultroll[gstar]["def"]) *
-    charactersubstatvalue[charactername]["def"];
+  var stat4atkpercentpt = (stat4atkpercent / artifactdefaultroll[gstar]["atk%"]) * mapCharacterSubStat["atk%"];
+  var stat4hppercentpt = (stat4hppercent / artifactdefaultroll[gstar]["hp%"]) * mapCharacterSubStat["hp%"];
+  var stat4defpercentpt = (stat4defpercent / artifactdefaultroll[gstar]["def%"]) * mapCharacterSubStat["def%"];
+  var stat4CRpt = (stat4CRpercent / artifactdefaultroll[gstar]["cr"]) * mapCharacterSubStat["cr"];
+  var stat4CDpt = (stat4CDpercent / artifactdefaultroll[gstar]["cd"]) * mapCharacterSubStat["cd"];
+  var stat4EMpt = (stat4EM / artifactdefaultroll[gstar]["em"]) * mapCharacterSubStat["em"];
+  var stat4ERpt = (stat4ERpercent / artifactdefaultroll[gstar]["er"]) * mapCharacterSubStat["er"];
+  var stat4atkpt = (stat4atk / artifactdefaultroll[gstar]["atk"]) * mapCharacterSubStat["atk"];
+  var stat4hppt = (stat4hp / artifactdefaultroll[gstar]["hp"]) * mapCharacterSubStat["hp"];
+  var stat4defpt = (stat4def / artifactdefaultroll[gstar]["def"]) * mapCharacterSubStat["def"];
 
   var stat4pt =
     stat4atkpercentpt +
@@ -1247,36 +1216,16 @@ async function handleRequest(request) {
     stat4hppt +
     stat4defpt;
 
-  var stat5atkpercentpt =
-    (stat5atkpercent / artifactdefaultroll[cstar]["atk%"]) *
-    charactersubstatvalue[charactername]["atk%"];
-  var stat5hppercentpt =
-    (stat5hppercent / artifactdefaultroll[cstar]["hp%"]) *
-    charactersubstatvalue[charactername]["hp%"];
-  var stat5defpercentpt =
-    (stat5defpercent / artifactdefaultroll[cstar]["def%"]) *
-    charactersubstatvalue[charactername]["def%"];
-  var stat5CRpt =
-    (stat5CRpercent / artifactdefaultroll[cstar]["cr"]) *
-    charactersubstatvalue[charactername]["cr"];
-  var stat5CDpt =
-    (stat5CDpercent / artifactdefaultroll[cstar]["cd"]) *
-    charactersubstatvalue[charactername]["cd"];
-  var stat5EMpt =
-    (stat5EM / artifactdefaultroll[cstar]["em"]) *
-    charactersubstatvalue[charactername]["em"];
-  var stat5ERpt =
-    (stat5ERpercent / artifactdefaultroll[cstar]["er"]) *
-    charactersubstatvalue[charactername]["er"];
-  var stat5atkpt =
-    (stat5atk / artifactdefaultroll[cstar]["atk"]) *
-    charactersubstatvalue[charactername]["atk"];
-  var stat5hppt =
-    (stat5hp / artifactdefaultroll[cstar]["hp"]) *
-    charactersubstatvalue[charactername]["hp"];
-  var stat5defpt =
-    (stat5def / artifactdefaultroll[cstar]["def"]) *
-    charactersubstatvalue[charactername]["def"];
+  var stat5atkpercentpt = (stat5atkpercent / artifactdefaultroll[cstar]["atk%"]) * mapCharacterSubStat["atk%"];
+  var stat5hppercentpt = (stat5hppercent / artifactdefaultroll[cstar]["hp%"]) * mapCharacterSubStat["hp%"];
+  var stat5defpercentpt = (stat5defpercent / artifactdefaultroll[cstar]["def%"]) * mapCharacterSubStat["def%"];
+  var stat5CRpt = (stat5CRpercent / artifactdefaultroll[cstar]["cr"]) * mapCharacterSubStat["cr"];
+  var stat5CDpt = (stat5CDpercent / artifactdefaultroll[cstar]["cd"]) * mapCharacterSubStat["cd"];
+  var stat5EMpt = (stat5EM / artifactdefaultroll[cstar]["em"]) * mapCharacterSubStat["em"];
+  var stat5ERpt = (stat5ERpercent / artifactdefaultroll[cstar]["er"]) * mapCharacterSubStat["er"];
+  var stat5atkpt = (stat5atk / artifactdefaultroll[cstar]["atk"]) * mapCharacterSubStat["atk"];
+  var stat5hppt = (stat5hp / artifactdefaultroll[cstar]["hp"]) * mapCharacterSubStat["hp"];
+  var stat5defpt = (stat5def / artifactdefaultroll[cstar]["def"]) * mapCharacterSubStat["def"];
 
   var stat5pt =
     stat5atkpercentpt +
