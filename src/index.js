@@ -158,6 +158,7 @@ async function handleRequest(request) {
     10000087: "neuvillette",
     10000089: "furina",
     10000091: "navia",
+    10000094: "chiori",
   };
 
   const artifactSubstatScore = {
@@ -1023,6 +1024,18 @@ async function handleRequest(request) {
       hp: artifactSubstatScore.NONE,
       "def%": artifactSubstatScore.NONE,
       def: artifactSubstatScore.NONE,
+    },
+    chiori: {
+      cr: artifactSubstatScore.HIGHEST,
+      cd: artifactSubstatScore.HIGHEST,
+      er: artifactSubstatScore.LOW,
+      em: artifactSubstatScore.NONE,
+      "atk%": artifactSubstatScore.MEDIUM,
+      atk: artifactSubstatScore.LOW,
+      "hp%": artifactSubstatScore.NONE,
+      hp: artifactSubstatScore.NONE,
+      "def%": artifactSubstatScore.HIGHEST,
+      def: artifactSubstatScore.MEDIUM,
     },
   };
 
