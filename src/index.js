@@ -160,6 +160,7 @@ async function handleRequest(request) {
     10000091: "navia",
     10000094: "chiori",
     10000096: "arlecchino",
+    10000098: "clorinde",
   };
 
   const artifactSubstatScore = {
@@ -1039,6 +1040,18 @@ async function handleRequest(request) {
       def: artifactSubstatScore.MEDIUM,
     },
     arlecchino: {
+      cr: artifactSubstatScore.HIGHEST,
+      cd: artifactSubstatScore.HIGHEST,
+      er: artifactSubstatScore.LOW,
+      em: artifactSubstatScore.MEDIUM,
+      "atk%": artifactSubstatScore.HIGH,
+      atk: artifactSubstatScore.LOW,
+      "hp%": artifactSubstatScore.NONE,
+      hp: artifactSubstatScore.NONE,
+      "def%": artifactSubstatScore.NONE,
+      def: artifactSubstatScore.NONE,
+    },
+    clorinde: {
       cr: artifactSubstatScore.HIGHEST,
       cd: artifactSubstatScore.HIGHEST,
       er: artifactSubstatScore.LOW,
